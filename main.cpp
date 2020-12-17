@@ -3,6 +3,7 @@
 #include <map>
 #include <locale>
 #include <vector>
+#include <ctime>
 using namespace std;
 void pinyin2data();
 void txt2data();
