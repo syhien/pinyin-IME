@@ -9,6 +9,7 @@
 using namespace std;
 void pinyin2data();
 void txt2data();
+void dictionary_input(wifstream& fin);
 
 map<string, vector<wchar_t>> pinyin;
 map<wstring, long long> dictionary;
@@ -20,9 +21,7 @@ int main()
 	if (!fin)
 		txt2data();
 	else
-	{
-
-	}
+		dictionary_input(fin);
 	return 0;
 }
 
@@ -48,6 +47,18 @@ void pinyin2data()
 			dictionary[tmp] = 0;
 		}
 	}
+	fin.close();
+	fin.clear();
+}
+
+void dictionary_input(wifstream &fin)
+{
+	setlocale(LC_ALL, "chs");
+	fin.imbue(locale("chs"));
+	wstring word;
+	int word_count;
+	while (fin >> word >> word_count)
+		dictionary[word] = word_count;
 	fin.close();
 	fin.clear();
 }
