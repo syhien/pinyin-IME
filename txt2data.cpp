@@ -10,8 +10,7 @@
 using namespace std;
 
 extern map<string, vector<wchar_t>> pinyin;
-extern map<vector<string>, vector<wstring>> dictionary;
-extern map<wstring, long long> frequency;
+extern map<wstring, long long> dictionary;
 
 wstring string2wstring(string str)
 {
@@ -48,13 +47,10 @@ void txt2data()
 				hanzi = 0;
 		if (hanzi)
 		{
-			vector<string> pinxie;
-			for (auto& i : word)
-				pinxie.push_back(hanzi_to_pinyin[i]);
-			if (find(dictionary[pinxie].begin(), dictionary[pinxie].end(), word) == dictionary[pinxie].end())
-				dictionary[pinxie].push_back(word), frequency[word] = 1;
+			if (dictionary.find(word) == dictionary.end())
+				dictionary[word] = 0;
 			else
-				frequency[word]++;
+				dictionary[word]++;
 		}
 	}
 	fin.close();
@@ -62,15 +58,7 @@ void txt2data()
 	wofstream fout("dictionary.data", ios::out);
 	fout.imbue(locale("chs"));
 	for (auto& i : dictionary)
-	{
-		fout << i.first.size() << L" ";
-		for (auto& j : i.first)
-			fout << string2wstring(j) << L" ";
-		fout << i.second.size() << L" ";
-		for (auto& j : i.second)
-			fout << j << L" " << frequency[j] << L" ";
-		fout << endl;
-	}
+		fout << i.first << L" " << i.second << endl;
 	fout.close();
 	fout.clear();
 }

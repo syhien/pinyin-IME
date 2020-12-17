@@ -11,8 +11,7 @@ void pinyin2data();
 void txt2data();
 
 map<string, vector<wchar_t>> pinyin;
-map<vector<string>, vector<wstring>> dictionary;
-map<wstring, long long> frequency;
+map<wstring, long long> dictionary;
 
 int main()
 {
@@ -45,11 +44,4 @@ void pinyin2data()
 	}
 	fin.close();
 	fin.clear();
-	for (auto& i : pinyin)
-		for (auto& j : i.second)
-		{
-			wstring tmp = L" ";
-			tmp[0] = j;
-			frequency[tmp] = 0;
-		}
 }
