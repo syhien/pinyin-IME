@@ -29,11 +29,5 @@ void pinyin2data()
 			en += line[i];
 		for (i++; i < line.length(); i++)
 			pinyin[en].push_back(line[i]);
-		//DEBUG
-		cout << "×ÖÄ¸´®:" << en << " ";
-		wcout.imbue(locale("chs"));
-		for (auto& j : pinyin[en])
-			wcout << j << " ";
-		cout << endl;
 	}
 }
