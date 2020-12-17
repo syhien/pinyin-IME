@@ -41,6 +41,12 @@ void pinyin2data()
 			en += line[i];
 		for (i++; i < line.length(); i++)
 			pinyin[en].push_back(line[i]);
+		wstring tmp = L" ";
+		for (auto& i : pinyin[en])
+		{
+			tmp[0] = i;
+			dictionary[tmp] = 0;
+		}
 	}
 	fin.close();
 	fin.clear();
