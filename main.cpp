@@ -12,8 +12,10 @@ using namespace std;
 void pinyin2data();
 void txt2data();
 void dictionary_input(wifstream& fin);
+void word2pinyin(wstring word, int cur_position, string pinyin_string);
 
 map<string, vector<wchar_t>> pinyin;
+map<string, vector<wstring>> pinyin_to_words;
 map<wstring, long long> dictionary;
 
 int main()
@@ -30,6 +32,7 @@ int main()
 		cout << "输入拼音\n";
 		string pinxie;
 		vector<string> yinjie;
+		wstring words;
 		bool error_input = 0;
 		cin >> pinxie;
 		for (int i = 0; i < pinxie.length();)
@@ -57,17 +60,17 @@ int main()
 		if (error_input)
 		{
 			cout << "输入了错误的拼音\n";
-			while (!_kbhit())
-				;
+			while (!_kbhit());
 			continue;
 		}
+		string yinjie_string = "";
 		for (auto i = yinjie.begin(); i != yinjie.end(); i++)
 			if (i != yinjie.end() - 1)
-				cout << *i << "'";
+				yinjie_string += *i + "'";
 			else
-				cout << *i << endl;
-		while (!_kbhit())
-			;
+				yinjie_string += *i;
+		cout << yinjie_string << endl;
+		while (!_kbhit());
 		continue;
 	}
 	return 0;
@@ -75,6 +78,7 @@ int main()
 
 void pinyin2data()
 {
+	cout << "初始化拼音中\n";
 	setlocale(LC_ALL, "chs");
 	wifstream fin;
 	fin.open("pinyin.txt", ios::in);
@@ -99,14 +103,33 @@ void pinyin2data()
 	fin.clear();
 }
 
+string wstring2string(wstring wstr)
+{
+	string result;
+	//获取缓冲区大小，并申请空间，缓冲区大小事按字节计算的  
+	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+	char* buffer = new char[len + 1];
+	//宽字节编码转换成多字节编码  
+	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
+	buffer[len] = '\0';
+	//删除缓冲区并返回值  
+	result.append(buffer);
+	delete[] buffer;
+	return result;
+}
+
 void dictionary_input(wifstream &fin)
 {
+	cout << "初始化词典中\n";
 	setlocale(LC_ALL, "chs");
 	fin.imbue(locale("chs"));
+	wstring pinxie_string;
+	int words_number;
 	wstring word;
 	int word_count;
-	while (fin >> word >> word_count)
-		dictionary[word] = word_count;
+	while (fin >> pinxie_string >> words_number)
+		for (int i = 0; i < words_number; i++)
+			fin >> word >> word_count, pinyin_to_words[wstring2string(pinxie_string)].push_back(word), dictionary[word] = word_count;
 	fin.close();
 	fin.clear();
 }

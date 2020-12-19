@@ -11,6 +11,7 @@ using namespace std;
 
 extern map<string, vector<wchar_t>> pinyin;
 extern map<wstring, long long> dictionary;
+extern map<string, vector<wstring>> pinyin_to_words;
 
 wstring string2wstring(string str)
 {
@@ -27,8 +28,24 @@ wstring string2wstring(string str)
 	return result;
 }
 
+void word2pinyin(wstring word, int cur_position, string pinyin_string)
+{
+	wchar_t c = word[cur_position];
+	for (auto& i : pinyin)
+		if (find(i.second.begin(), i.second.end(), c) == i.second.end())
+			continue;
+		else
+		{
+			if (cur_position == word.length() - 1)
+				pinyin_to_words[pinyin_string + i.first].push_back(word);
+			else
+				word2pinyin(word, cur_position + 1, pinyin_string + i.first + "'");
+		}
+}
+
 void txt2data()
 {
+	cout << "初始化语料中\n";
 	map <wchar_t, string> hanzi_to_pinyin;
 	for (auto& i : pinyin)
 		for (auto& j : i.second)
@@ -48,7 +65,7 @@ void txt2data()
 		if (hanzi)
 		{
 			if (dictionary.find(word) == dictionary.end())
-				dictionary[word] = 0;
+				dictionary[word] = 0, word2pinyin(word, 0, "");
 			else
 				dictionary[word]++;
 		}
@@ -57,8 +74,14 @@ void txt2data()
 	fin.clear();
 	wofstream fout("dictionary.data", ios::out);
 	fout.imbue(locale("chs"));
-	for (auto& i : dictionary)
-		fout << i.first << L" " << i.second << endl;
+	for (auto& i : pinyin_to_words)
+	{
+		fout << string2wstring(i.first) << L"  ";
+		fout << i.second.size() << L"  ";
+		for (auto& j : i.second)
+			fout << j << L" " << dictionary[j] << L"  ";
+		fout << endl;
+	}
 	fout.close();
 	fout.clear();
 }
