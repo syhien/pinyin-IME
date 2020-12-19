@@ -24,7 +24,6 @@ int main()
 		txt2data();
 	else
 		dictionary_input(fin);
-	const string kick_to_continue = "按任意键继续\n";
 	while (1)
 	{
 		system("cls");
@@ -57,7 +56,9 @@ int main()
 		}
 		if (error_input)
 		{
-			cout << "输入了错误的拼音\n" << kick_to_continue, _getch();
+			cout << "输入了错误的拼音\n";
+			while (!_kbhit())
+				;
 			continue;
 		}
 		for (auto i = yinjie.begin(); i != yinjie.end(); i++)
@@ -65,7 +66,9 @@ int main()
 				cout << *i << "'";
 			else
 				cout << *i << endl;
-		cout << kick_to_continue, _getch();
+		while (!_kbhit())
+			;
+		continue;
 	}
 	return 0;
 }
