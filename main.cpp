@@ -6,6 +6,8 @@
 #include <ctime>
 #include <wchar.h>
 #include <wctype.h>
+#include <Windows.h>
+#include <conio.h>
 using namespace std;
 void pinyin2data();
 void txt2data();
@@ -22,6 +24,49 @@ int main()
 		txt2data();
 	else
 		dictionary_input(fin);
+	const string kick_to_continue = "按任意键继续\n";
+	while (1)
+	{
+		system("cls");
+		cout << "输入拼音\n";
+		string pinxie;
+		vector<string> yinjie;
+		bool error_input = 0;
+		cin >> pinxie;
+		for (int i = 0; i < pinxie.length();)
+		{
+			if (pinxie[i] == '\'')
+			{
+				i++;
+				continue;
+			}
+			auto dot_find = pinxie.substr(i).find("'");
+			int end_position = dot_find == pinxie.substr(i).npos ? pinxie.length() - 1 : dot_find + i - 1;
+			while (end_position >= i)
+				if (pinyin.find(pinxie.substr(i, end_position - i + 1)) == pinyin.end())
+					end_position--;
+				else
+					break;
+			if (end_position < i)
+			{
+				error_input = 1;
+				break;
+			}
+			yinjie.push_back(pinxie.substr(i, end_position - i + 1));
+			i = end_position + 1;
+		}
+		if (error_input)
+		{
+			cout << "输入了错误的拼音\n" << kick_to_continue, _getch();
+			continue;
+		}
+		for (auto i = yinjie.begin(); i != yinjie.end(); i++)
+			if (i != yinjie.end() - 1)
+				cout << *i << "'";
+			else
+				cout << *i << endl;
+		cout << kick_to_continue, _getch();
+	}
 	return 0;
 }
 
