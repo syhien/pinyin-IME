@@ -8,15 +8,25 @@
 #include <wctype.h>
 #include <Windows.h>
 #include <conio.h>
+#include <algorithm>
 using namespace std;
 void pinyin2data();
 void txt2data();
 void dictionary_input(wifstream& fin);
 void word2pinyin(wstring word, int cur_position, string pinyin_string);
+void save_dictionary();
+wstring string2wstring(string str);
 
 map<string, vector<wchar_t>> pinyin;
 map<string, vector<wstring>> pinyin_to_words;
 map<wstring, long long> dictionary;
+
+bool words_compare(const wstring& a, const wstring& b)
+{
+	if (a.length() != b.length())
+		return a.length() > b.length();
+	return dictionary[a] > dictionary[b];
+}
 
 int main()
 {
@@ -70,10 +80,72 @@ int main()
 			else
 				yinjie_string += *i;
 		cout << yinjie_string << endl;
-		while (!_kbhit());
-		continue;
+		int solved_yin = 0;
+		wstring final_word = L"";
+		while (solved_yin < yinjie.size())
+		{
+			string cur_yinjie = yinjie[solved_yin];
+			vector<wstring> words_to_choose;
+			//单字
+			for (auto& i : pinyin[cur_yinjie])
+			{
+				wstring tmp = L"啊";
+				tmp[0] = i;
+				words_to_choose.push_back(tmp);
+			}
+			//多字
+			for (int i = 1; solved_yin + i < yinjie.size(); i++)
+			{
+				cur_yinjie += "'" + yinjie[solved_yin + i];
+				if (pinyin_to_words.find(cur_yinjie) != pinyin_to_words.end())
+					for (auto& j : pinyin_to_words[cur_yinjie])
+						words_to_choose.push_back(j);
+			}
+			sort(words_to_choose.begin(), words_to_choose.end(), words_compare);
+			for (auto i = words_to_choose.begin(); i != words_to_choose.end(); i++)
+				cout << i - words_to_choose.begin() + 1 << ".", wcout << *i << L"  ";
+			cout << endl << "词组编号（0表示无候选退出输入）：\n";
+			int word_choose;
+			cin >> word_choose;
+			if (!word_choose)
+			{
+				cout << "退出输入\n";
+				break;
+			}
+			dictionary[words_to_choose[word_choose - 1]]++;
+			final_word += words_to_choose[word_choose - 1];
+			solved_yin += words_to_choose[word_choose - 1].length();
+		}
+		cout << "输入结果：";
+		wcout << final_word << endl;
+		if (dictionary.find(final_word) == dictionary.end())
+			pinyin_to_words[yinjie_string].push_back(final_word), dictionary[final_word] = 393939;
+		cout << "按ESC退出程序或按其他任意键继续输入\n";
+		if (_getch() == 27)
+			break;
 	}
+	save_dictionary();
 	return 0;
+}
+
+void save_dictionary()
+{
+	cout << "正在保存数据，程序稍后退出\n";
+	wofstream fout;
+	fout.open("dictionary.data", ios::out | ios::trunc);
+	fout.imbue(locale("chs"));
+	setlocale(LC_ALL, "chs");
+	for (auto& i : pinyin_to_words)
+	{
+		fout << string2wstring(i.first) << L"  ";
+		fout << i.second.size() << L"  ";
+		for (auto& j : i.second)
+			fout << j << L" " << dictionary[j] << L"  ";
+		fout << endl;
+	}
+	fout.close();
+	fout.clear();
+	cout << "输入法退出\n";
 }
 
 void pinyin2data()
