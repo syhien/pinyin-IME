@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include <conio.h>
 #include <algorithm>
+#include <cmath>
 using namespace std;
 void pinyin2data();
 void txt2data();
@@ -23,6 +24,8 @@ map<wstring, long long> dictionary;
 
 bool words_compare(const wstring& a, const wstring& b)
 {
+	if (abs(dictionary[a] - dictionary[b]) > 393939)
+		return dictionary[a] > dictionary[b];
 	if (a.length() != b.length())
 		return a.length() > b.length();
 	return dictionary[a] > dictionary[b];
@@ -119,7 +122,7 @@ int main()
 		cout << "输入结果：";
 		wcout << final_word << endl;
 		if (dictionary.find(final_word) == dictionary.end())
-			pinyin_to_words[yinjie_string].push_back(final_word), dictionary[final_word] = 393939;
+			pinyin_to_words[yinjie_string].push_back(final_word), dictionary[final_word] = 393939 + 1;
 		cout << "按ESC退出程序或按其他任意键继续输入\n";
 		if (_getch() == 27)
 			break;
