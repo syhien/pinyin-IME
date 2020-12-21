@@ -70,8 +70,47 @@ int main()
 		}
 		if (error_input)
 		{
-			cout << "输入了错误的拼音\n";
-			while (!_kbhit());
+			cout << "尝试首字母简拼\n";
+			vector<wstring> words_to_choose;
+			for (auto& i : pinyin_to_words)
+			{
+				vector<int> point_position;
+				for (int j = 0; j < i.first.length(); j++)
+					if (i.first[j] == '\'')
+						point_position.push_back(j);
+				if (point_position.size() + 1 != pinxie.length())
+					continue;
+				if (pinxie[0] != i.first[0])
+					continue;
+				bool error_jianpin = 0;
+				for (int j = 1; j < pinxie.length() and !error_jianpin; j++)
+					if (pinxie[j] != i.first[point_position[j - 1] + 1])
+						error_jianpin = 1;
+				if (error_jianpin)
+					continue;
+				for (auto& j : i.second)
+					words_to_choose.push_back(j);
+			}
+			sort(words_to_choose.begin(), words_to_choose.end(), words_compare);
+			for (auto i = words_to_choose.begin(); i != words_to_choose.end(); i++)
+				cout << i - words_to_choose.begin() + 1 << ".", wcout << *i << L"  ";
+			cout << endl << "词组编号（0表示无候选退出输入）：\n";
+			int word_choose;
+			cin >> word_choose;
+			if (!word_choose or word_choose < 0 or word_choose > words_to_choose.size())
+			{
+				cout << "退出输入\n";
+				cout << "按ESC退出程序或按其他任意键继续输入\n";
+				if (_getch() == 27)
+					break;
+				continue;
+			}
+			cout << "输入结果：";
+			wcout << words_to_choose[word_choose - 1] << endl;
+			dictionary[words_to_choose[word_choose - 1]]++;
+			cout << "按ESC退出程序或按其他任意键继续输入\n";
+			if (_getch() == 27)
+				break;
 			continue;
 		}
 		string yinjie_string = "";
@@ -108,7 +147,7 @@ int main()
 			cout << endl << "词组编号（0表示无候选退出输入）：\n";
 			int word_choose;
 			cin >> word_choose;
-			if (!word_choose)
+			if (!word_choose or word_choose < 0 or word_choose > words_to_choose.size())
 			{
 				cout << "退出输入\n";
 				break;
