@@ -24,11 +24,9 @@ map<wstring, long long> dictionary;
 
 bool words_compare(const wstring& a, const wstring& b)
 {
-	if (abs(dictionary[a] - dictionary[b]) > 393939)
+	if (dictionary[a] != dictionary[b])
 		return dictionary[a] > dictionary[b];
-	if (a.length() != b.length())
-		return a.length() > b.length();
-	return dictionary[a] > dictionary[b];
+	return a.length() > b.length();
 }
 
 int main()
