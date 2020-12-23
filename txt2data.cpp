@@ -79,7 +79,12 @@ void txt2data()
 		fout << string2wstring(i.first) << L"  ";
 		fout << i.second.size() << L"  ";
 		for (auto& j : i.second)
-			fout << j << L" " << dictionary[j] << L"  ";
+		{
+			fout << j << L" ";
+			fout.imbue(locale("C"));
+			fout << dictionary[j] << L"  ";
+			fout.imbue(locale("chs"));
+		}
 		fout << endl;
 	}
 	fout.close();
