@@ -40,6 +40,7 @@ int main()
 	while (1)
 	{
 		system("cls");
+		fflush(stdin);
 		cout << "输入拼音\n";
 		string pinxie;
 		vector<string> yinjie;
@@ -171,6 +172,7 @@ int main()
 void save_dictionary()
 {
 	cout << "正在保存数据，程序稍后退出\n";
+	cout << "长时间无响应为正常现象，稍作等待后回车即可退出程序\n";
 	wofstream fout;
 	fout.open("dictionary.data", ios::out | ios::trunc);
 	fout.imbue(locale("chs"));
