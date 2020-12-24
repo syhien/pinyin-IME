@@ -57,10 +57,8 @@ void txt2data()
 	while (fin >> word)
 	{
 		bool hanzi = 1;
-		bool read_end = 0;
-		bool t1, t2, t3, t4, t5;
 		for (int i = 0; i < word.length() and hanzi; i++)
-			if ((t1 = iswupper(word[i])) or (t4 = iswlower(word[i])) or (t5 = iswdigit(word[i])) or (t2 = iswpunct(word[i])) or (t3 = iswspace(word[i]) or hanzi_to_pinyin.find(word[i]) == hanzi_to_pinyin.end()))
+			if (iswupper(word[i]) or iswlower(word[i]) or iswdigit(word[i]) or iswpunct(word[i]) or iswspace(word[i]) or hanzi_to_pinyin.find(word[i]) == hanzi_to_pinyin.end())
 				hanzi = 0;
 		if (hanzi)
 		{
