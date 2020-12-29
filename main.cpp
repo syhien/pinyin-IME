@@ -69,7 +69,36 @@ int main()
 			yinjie.push_back(pinxie.substr(i, end_position - i + 1));
 			i = end_position + 1;
 		}
+		bool try_jianpin = 0;
+		//¥”∫ÛÕ˘«∞∆•≈‰
 		if (error_input)
+		{
+			yinjie.clear();
+			for (int i = pinxie.length() - 1; i >= 0;)
+			{
+				if (pinxie[i] == '\'')
+				{
+					i--;
+					continue;
+				}
+				auto dot_find = pinxie.substr(0, i + 1).find_last_of('\'');
+				int begin_position = dot_find == pinxie.substr(0, i + 1).npos ? 0 : dot_find + 1;
+				while (begin_position <= i)
+					if (pinyin.find(pinxie.substr(begin_position, i - begin_position + 1)) == pinyin.end())
+						begin_position++;
+					else
+						break;
+				if (begin_position > i)
+				{
+					try_jianpin = 1;
+					break;
+				}
+				yinjie.insert(yinjie.begin(), pinxie.substr(begin_position, i - begin_position + 1));
+				i = begin_position - 1;
+			}
+		}
+		//ºÚ∆¥
+		if (try_jianpin)
 		{
 			cout << "≥¢ ‘ ◊◊÷ƒ∏ºÚ∆¥\n";
 			vector<wstring> words_to_choose;
