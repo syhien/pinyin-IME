@@ -31,6 +31,7 @@ bool words_compare(const wstring& a, const wstring& b)
 
 int main()
 {
+	ios::sync_with_stdio(0);
 	pinyin2data();
 	wifstream fin("dictionary.data", ios::in);
 	if (!fin)
